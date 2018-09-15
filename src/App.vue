@@ -7,13 +7,30 @@
         </div>
       </div>
     </nav>
-    <router-view/>
+    <div class="tile is-ancestor">
+      <div id="section-tags" class="tile is-child is-2">
+        <router-view name="tags" @searchQuery="onSearch($event)"/>
+      </div>
+      <div id="section-content" class="tile is-child">
+        <router-view v-bind:searchQuery="queries" />
+      </div>
+    </div>
   </div>
 </template>
 
 <script>
 export default {
-  name: 'App'
+  name: 'App',
+  data () {
+    return {
+      queries: ''
+    }
+  },
+  methods: {
+    onSearch: function (query) {
+      this.queries = query
+    }
+  }
 }
 </script>
 
@@ -25,6 +42,10 @@ export default {
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
   color: #2c3e50;
+}
+
+#section-tags {
+  padding: 10px 0;
 }
 
 html, body {
