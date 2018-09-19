@@ -5,6 +5,6 @@ export default {
 }
 
 async function all () {
-  const { data } = await axios.get('https://repulsion-stickers-api.herokuapp.com/all')
-  return data
+  const { data } = await axios.get('https://repulsion-stickers-api.herokuapp.com/api/stickers')
+  return data.data
 }
