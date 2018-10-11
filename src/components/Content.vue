@@ -6,13 +6,16 @@
           <img class="thumbs" :src="sticker.url" />
           <div class="level caption">
             <div class="level-left">
-              {{ sticker.keyword }}
+              {{ sticker.uploader }}
             </div>
             <div class="level-right">
-              <font-awesome-icon icon="comment-dots" />
+              <font-awesome-icon class="icon" icon="comment-dots" />
               {{ sticker.count }}
             </div>
           </div>
+        </div>
+        <div class="control">
+          <input class="input keyword" type="text" v-bind:value="sticker.keyword" readonly>
         </div>
       </div>
     </div>
@@ -84,7 +87,8 @@ export default {
           stickerCol.push({
             keyword: sticker.keyword,
             url: sticker.url,
-            count: sticker.count ? sticker.count : 0
+            count: sticker.useCount || 0,
+            uploader: sticker.upload.username || ''
           })
           ++stickerIndex
         }
@@ -106,11 +110,31 @@ export default {
     margin: 10px 0;
   }
 
+  .box {
+    border-radius: 2px;
+    padding: 10px;
+    margin-bottom: 0px;
+  }
+
   .box img.thumbs {
-    height: 150px;
+    height: 100px;
   }
 
   .box div.caption {
-    margin: 0 0 -10px 0;
+    font-size: 0.7rem;
+    color: #aaaaaa;
+    margin-bottom: -10px;
+  }
+
+  input.keyword {
+    margin-top: 5px;
+    border-radius: 2px;
+    font-size: 0.8em;
+    padding: 10px;
+    text-align: center;
+  }
+
+  .caption .icon {
+    margin-right: 5px;
   }
 </style>
