@@ -10,7 +10,7 @@
       </p>
     </div>
     <label class="panel-block" v-if="tags.length > 0">
-      <input type="checkbox">
+      <input type="checkbox" />
       tags (in development)
     </label>
   </nav>
