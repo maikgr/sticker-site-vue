@@ -12,7 +12,8 @@
         <router-view name="tags" @searchQuery="onSearch($event)"/>
       </div>
       <div id="section-content" class="tile is-child">
-        <router-view v-bind:searchQuery="queries" />
+        <router-view :searchQuery="queries" :currentPage="currentPage" @totalPage="onTotalPageSet($event)"/>
+        <router-view name="pagination" :totalPage="totalPage" @currentPage="onPageSelected($event)"/>
       </div>
     </div>
   </div>
@@ -23,12 +24,20 @@ export default {
   name: 'App',
   data () {
     return {
-      queries: ''
+      queries: '',
+      totalPage: 1,
+      currentPage: 1
     }
   },
   methods: {
     onSearch: function (query) {
       this.queries = query
+    },
+    onTotalPageSet: function (number) {
+      this.totalPage = number
+    },
+    onPageSelected: function (number) {
+      this.currentPage = number
     }
   }
 }

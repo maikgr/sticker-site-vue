@@ -1,5 +1,6 @@
 <template>
   <section class="section has-background-light">
+    <router-view name="pagination" />
     <div class="columns columns-wrap">
       <div class="column is-one-fifth" v-for="(sticker, index) in stickers" :key="index">
         <div class="box has-text-centered">
@@ -15,36 +16,29 @@
           </div>
         </div>
         <div class="control">
-          <input class="input keyword" type="text" :value="sticker.keyword" readonly>
+          <input class="input keyword" type="text" :value="sticker.keyword" readonly />
         </div>
       </div>
     </div>
-    <pagination
-      :current="currentPage"
-      :total="totalPage"
-      :itemsPerPage="1"
-      :onChange="getStickersOnPage"
-      class="has-background-light">
-    </pagination>
   </section>
 </template>
 
 <script>
 import stickerPageService from '../services/sticker_page_service'
-import Pagination from 'vue-2-bulma-pagination'
 
 export default {
   name: 'Content',
-  components: { Pagination },
   props: {
     searchQuery: {
       type: String
+    },
+    currentPage: {
+      type: Number
     }
   },
   data () {
     return {
       stickers: [],
-      currentPage: 1,
       totalPage: 0
     }
   },
@@ -52,17 +46,23 @@ export default {
     await this.getStickersOnPage(this.currentPage)
   },
   methods: {
-    getStickersOnPage: async function (page) {
+    getStickersOnPage: async function (page, searchQuery) {
       this.stickers = []
-      this.currentPage = page
-      Promise.all([
-        stickerPageService.page(page, this.searchQuery),
-        stickerPageService.totalPage(this.searchQuery)
-      ])
-        .then((data) => {
-          this.stickers = data[0]
-          this.totalPage = data[1]
-        })
+
+      const { totalPage, data } = await stickerPageService.page(page, searchQuery)
+      this.emitTotalPage(totalPage)
+      this.stickers = data
+    },
+    emitTotalPage: function (totalPage) {
+      this.$emit('totalPage', totalPage)
+    }
+  },
+  watch: {
+    searchQuery: async function () {
+      await this.getStickersOnPage(1, this.searchQuery)
+    },
+    currentPage: async function () {
+      await this.getStickersOnPage(this.currentPage, this.searchQuery)
     }
   }
 }
@@ -70,7 +70,7 @@ export default {
 
 <style scoped>
   .section {
-    height: 90%;
+    min-height: 666px;
   }
 
   .pagination {
