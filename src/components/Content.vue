@@ -2,7 +2,7 @@
   <section class="section has-background-light">
     <router-view name="pagination" />
     <div class="columns columns-wrap">
-      <div class="column is-one-fifth" v-for="(sticker, index) in stickers" :key="index">
+      <div class="column is-one-sixth" v-for="(sticker, index) in stickers" :key="index">
         <div class="box has-text-centered">
           <img class="thumbs" :src="sticker.url" />
           <div class="level caption">
@@ -11,7 +11,7 @@
             </div>
             <div class="level-right">
               <font-awesome-icon class="icon" icon="comment-dots" />
-              {{ sticker.useCount }}
+              {{ sticker.useCount ? sticker.useCount : 0 }}
             </div>
           </div>
         </div>
@@ -34,6 +34,9 @@ export default {
     },
     currentPage: {
       type: Number
+    },
+    sortState: {
+      type: String
     }
   },
   data () {
@@ -46,10 +49,10 @@ export default {
     await this.getStickersOnPage(this.currentPage)
   },
   methods: {
-    getStickersOnPage: async function (page, searchQuery) {
+    getStickersOnPage: async function (page, searchQuery, sortState) {
       this.stickers = []
 
-      const { totalPage, data } = await stickerPageService.page(page, searchQuery)
+      const { totalPage, data } = await stickerPageService.page(page, searchQuery, sortState)
       this.emitTotalPage(totalPage)
       this.stickers = data
     },
@@ -59,10 +62,13 @@ export default {
   },
   watch: {
     searchQuery: async function () {
-      await this.getStickersOnPage(1, this.searchQuery)
+      await this.getStickersOnPage(1, this.searchQuery, this.sortState)
     },
     currentPage: async function () {
-      await this.getStickersOnPage(this.currentPage, this.searchQuery)
+      await this.getStickersOnPage(this.currentPage, this.searchQuery, this.sortState)
+    },
+    sortState: async function () {
+      await this.getStickersOnPage(1, this.searchQuery, this.sortState)
     }
   }
 }
@@ -103,11 +109,17 @@ export default {
 
   .caption .icon {
     margin-right: 5px;
+    margin-left: 5px;
   }
 
   .columns.columns-wrap {
     flex-wrap: wrap;
     flex-direction: row;
     max-width: 100%;
+  }
+
+  .column.is-one-sixth {
+    flex: none;
+    width: 16.6%;
   }
 </style>
